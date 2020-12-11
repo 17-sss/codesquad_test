@@ -33,10 +33,38 @@ const readInput = () => {
             process.exit();
         
         const [word, number, direction] = input;        
-        console.log(word, number, direction);
+        console.log('결과:', calcResult(word, number, direction));
         process.exit();        
     });
 };
+
+const calcResult = (word, number, direction) => {
+    direction = direction.toLowerCase();
+    // apple 1 r
+    let result = word.split(''); // 배열로 변환
+    let delValue = '';
+    let cnt = 0;
+    let reverse = false;
+
+    if ((number > 0) && (number < 100))
+        cnt = number
+    else if ((number < 0) && (number >= -100)) {
+        cnt = number * -1;
+        reverse = true
+    }
+    // console.log(number, reverse);
+
+    for (let i = 0; i < cnt; i++) {
+        if (direction === 'l') {
+            delValue = reverse ? result.pop() : result.shift();
+            reverse ? result.unshift(delValue) : result.push(delValue);
+        } else if (direction === 'r') {
+            delValue = reverse ? result.shift() : result.pop();
+            reverse ? result.push(delValue) : result.unshift(delValue);
+        } else break;               
+    }     
+    return result.join('');
+}
 
 
 console.log(
