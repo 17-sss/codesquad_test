@@ -1,4 +1,4 @@
-# 2021 코드스쿼드 마스터즈코스  테스트 (작성 중)
+# 2021 코드스쿼드 마스터즈코스 테스트 (작성 중)
 
 ## 1단계
 * Node.js로 readline을 사용하여 입력을 받음.
@@ -12,7 +12,8 @@
     3. 다시 문자열로 변경 후 최종 값 출력.
 <br/>
 
-### 참고 이미지
+### 참고 이미지 및 링크
 ![STEP1](./img/step1.png)
+[STEP1](https://github.com/17-sss/codesquad_test/tree/step-1)
 
 <hr/>
