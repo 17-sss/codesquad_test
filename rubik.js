@@ -4,14 +4,14 @@ const {executeU} = require('./commandFunc');
 // [function] START ****************************
 
 // 1. cubeStateView, 현재 큐브 상태 반환 (String)
-const cubeStateView = (aCube) => {
+const cubeStateView = (cubeTmp) => {
     let strResult = ``;
 
     // left front right back
-    for (const key in aCube) {
+    for (const key in cubeTmp) {
         if (key === 'front' || key === 'right' || key === 'back') continue;
 
-        const arrProperty = aCube[key];
+        const arrProperty = cubeTmp[key];
 
         for (let i = 0; i < arrProperty.length; i++) {
             const arrItem = arrProperty[i];
@@ -22,11 +22,11 @@ const cubeStateView = (aCube) => {
                 strTmp =
                     strSplit +
                     '\t' +
-                    aCube['front'][i].join(' ') +
+                    cubeTmp['front'][i].join(' ') +
                     '\t' +
-                    aCube['right'][i].join(' ') +
+                    cubeTmp['right'][i].join(' ') +
                     '\t' +
-                    aCube['back'][i].join(' ');
+                    cubeTmp['back'][i].join(' ');
             } else {
                 strTmp = '\t' + strSplit;
             }
@@ -71,8 +71,10 @@ const arrActionCreate = (strAction) => {
 } 
 
 // 3. actionEx, 받아온 동작 실행 (각종 동작 commandFunc에서 가져옴)
-const actionEx = (aCube, arrAction) => {
-    for (let i = 0; i < arrAction.length; i++) {
+const actionEx = (cubeTmp, arrAction, originCube) => {
+    let bMoveChk = false; // bMoveChk: 큐브 초기 값과 변동되었는지 체크
+
+    for (let i = 0; i < arrAction.length; i++) {                
         const strActionTmp = arrAction[i];
         const objOpt = {
             bReverse: (strActionTmp.split('').indexOf('\'') <= -1) ? false : true,
@@ -84,12 +86,13 @@ const actionEx = (aCube, arrAction) => {
             // 가장 윗줄을 왼쪽으로
             case 'U': 
             case 'U\'': 
-                executeU(aCube, objOpt); break; 
+                executeU(cubeTmp, objOpt); break; 
             default: break;
         }
-
-        console.log(`\n--action: ${strActionTmp}\n${cubeStateView(aCube)}`);
+        bMoveChk = JSON.stringify(cubeTmp) === JSON.stringify(originCube);     
+        console.log(`\n--action: ${strActionTmp}\n${cubeStateView(cubeTmp)}`);
     }   
+    return bMoveChk;
 };
 
 
@@ -100,18 +103,28 @@ const readInput = (aCube) => {
         input: process.stdin,
         output: process.stdout,
     });
-
+    
     console.log('\n-- 초기 상태 --\n' + cubeStateView(aCube));
 
+    const curCube = JSON.parse(JSON.stringify(aCube));
     rl.setPrompt('CUBE >');
     rl.prompt();
     rl.on('line', (strLine) => {
         if (strLine.toUpperCase() === 'Q') rl.close();
-        actionEx(aCube, arrActionCreate(strLine));
+        let moveCheck = actionEx(curCube, arrActionCreate(strLine), aCube);
+
+        if (moveCheck) {
+            console.log('@@@ 큐브가 다 맞춰졌습니다! 축하합니다!! @@@\n');
+            rl.close();        
+        }
 
         rl.prompt();
     }).on('close', () => {
-        console.log('Bye~');
+        /*
+            경과시간: 00:31 //추가 구현 항목
+            조작갯수: 6            
+        */        
+        console.log('이용해주셔서 감사합니다. 뚜뚜뚜.');
         process.exit();
     });
 };

@@ -8,8 +8,7 @@ const executeU = (aCube, objOpt) => {
     let nCnt = 0;
     let nLoop = bDouble ? 2 : 1;
 
-    while (nLoop !== nCnt) {
-        console.log(nCnt);
+    while (nLoop !== nCnt) {        
         nCnt++;
 
         if (!bReverse) {    // U    
@@ -29,6 +28,30 @@ const executeU = (aCube, objOpt) => {
 };
 
 // 2) L & L' (f > d , d > b, b > u, u > f)
+const executeL = (aCube, objOpt) => {
+    let { bReverse, bDouble } = objOpt;
+    let tmp = [];
+    let nCnt = 0;
+    let nLoop = bDouble ? 2 : 1;
+
+    while (nLoop !== nCnt) {
+        nCnt++;
+
+        /* 
+            front > down
+            down > back
+            back > up
+            up > front
+        */
 
 
-module.exports = { executeU };
+        if (!bReverse) {    // L
+            
+            
+        } else {            // L'
+            
+        } 
+    }    
+};
+
+module.exports = { executeU, executeL };
