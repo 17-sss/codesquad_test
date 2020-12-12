@@ -1,5 +1,5 @@
 // [STEP-3]
-const {executeU} = require('./commandFunc');
+const {executeU, executeL} = require('./commandFunc');
 
 // [function] START ****************************
 
@@ -87,6 +87,9 @@ const actionEx = (cubeTmp, arrAction, originCube) => {
             case 'U': 
             case 'U\'': 
                 executeU(cubeTmp, objOpt); break; 
+            case 'L':
+            case 'L\'':
+                executeL(cubeTmp, objOpt); break; 
             default: break;
         }
         bMoveChk = JSON.stringify(cubeTmp) === JSON.stringify(originCube);     
@@ -113,7 +116,7 @@ const readInput = (aCube) => {
         if (strLine.toUpperCase() === 'Q') rl.close();
         let moveCheck = actionEx(curCube, arrActionCreate(strLine), aCube);
 
-        if (moveCheck) {
+        if (false /* moveCheck*/ ) {
             console.log('@@@ 큐브가 다 맞춰졌습니다! 축하합니다!! @@@\n');
             rl.close();        
         }
