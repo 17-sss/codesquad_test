@@ -1,5 +1,5 @@
 // [STEP-3]
-const {executeU, executeL} = require('./commandFunc');
+const commandFunc = require('./commandFunc');
 
 // [function] START ****************************
 
@@ -82,16 +82,8 @@ const actionEx = (cubeTmp, arrAction, originCube) => {
         };
                 
         const strAction = strActionTmp.replace("2", '');      
-        switch (strAction) {
-            // 가장 윗줄을 왼쪽으로
-            case 'U': 
-            case 'U\'': 
-                executeU(cubeTmp, objOpt); break; 
-            case 'L':
-            case 'L\'':
-                executeL(cubeTmp, objOpt); break; 
-            default: break;
-        }
+        commandFunc(strAction, cubeTmp, objOpt);    // 동작 실행
+
         bMoveChk = JSON.stringify(cubeTmp) === JSON.stringify(originCube);     
         console.log(`\n--action: ${strActionTmp}\n${cubeStateView(cubeTmp)}`);
     }   
@@ -117,12 +109,13 @@ const readInput = (aCube) => {
         let moveCheck = actionEx(curCube, arrActionCreate(strLine), aCube);
 
         if (false /* moveCheck*/ ) {
-            console.log('@@@ 큐브가 다 맞춰졌습니다! 축하합니다!! @@@\n');
+            console.log('@@@ 큐브가 다 맞춰졌습니다! 축하합니다!! @@@');
             rl.close();        
         }
 
         rl.prompt();
     }).on('close', () => {
+        console.log('');
         /*
             경과시간: 00:31 //추가 구현 항목
             조작갯수: 6            
