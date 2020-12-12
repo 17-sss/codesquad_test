@@ -1,4 +1,5 @@
 // [STEP-3]
+const {executeU} = require('./commandFunc');
 
 // [function] START ****************************
 
@@ -69,38 +70,7 @@ const arrActionCreate = (strAction) => {
     return arrResult;
 } 
 
-// 3-1. actionEx에서 사용되는 함수들
-// [!!!] https://cube3x3.com/큐브를-맞추는-방/#notation 동작 참고함
-// 1) U & U' 
-const executeU = (aCube, objOpt) => {
-    let { bReverse, bDouble } = objOpt;
-    let tmp = [];
-    let nCnt = 0;
-    let nLoop = bDouble ? 2 : 1;
-
-    while (nLoop !== nCnt) {
-        console.log(nCnt);
-        nCnt++;
-
-        if (!bReverse) {    // U    
-            tmp = aCube['front'].shift();
-            aCube['front'].unshift(aCube['right'].shift()); 
-            aCube['right'].unshift(aCube['back'].shift()); 
-            aCube['back'].unshift(aCube['left'].shift());
-            aCube['left'].unshift(tmp);
-        } else {            // U'
-            tmp = aCube['front'].shift();
-            aCube['front'].unshift(aCube['left'].shift()); 
-            aCube['left'].unshift(aCube['back'].shift()); 
-            aCube['back'].unshift(aCube['right'].shift());
-            aCube['right'].unshift(tmp);
-        } 
-    }
-    
-};
-// 3-1. -------------- END 
-
-// 3-2. actionEx, 받아온 동작 실행 
+// 3. actionEx, 받아온 동작 실행 (각종 동작 commandFunc에서 가져옴)
 const actionEx = (aCube, arrAction) => {
     for (let i = 0; i < arrAction.length; i++) {
         const strActionTmp = arrAction[i];
