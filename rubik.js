@@ -69,7 +69,61 @@ const arrActionCreate = (strAction) => {
     return arrResult;
 } 
 
-// 3. readInput, 큐브 실행
+// 3-1. actionEx에서 사용되는 함수들
+// [!!!] https://cube3x3.com/큐브를-맞추는-방/#notation 동작 참고함
+// 1) U & U' 
+const executeU = (aCube, objOpt) => {
+    let { bReverse, bDouble } = objOpt;
+    let tmp = [];
+    let nCnt = 0;
+    let nLoop = bDouble ? 2 : 1;
+
+    while (nLoop !== nCnt) {
+        console.log(nCnt);
+        nCnt++;
+
+        if (!bReverse) {    // U    
+            tmp = aCube['front'].shift();
+            aCube['front'].unshift(aCube['right'].shift()); 
+            aCube['right'].unshift(aCube['back'].shift()); 
+            aCube['back'].unshift(aCube['left'].shift());
+            aCube['left'].unshift(tmp);
+        } else {            // U'
+            tmp = aCube['front'].shift();
+            aCube['front'].unshift(aCube['left'].shift()); 
+            aCube['left'].unshift(aCube['back'].shift()); 
+            aCube['back'].unshift(aCube['right'].shift());
+            aCube['right'].unshift(tmp);
+        } 
+    }
+    
+};
+// 3-1. -------------- END 
+
+// 3-2. actionEx, 받아온 동작 실행 
+const actionEx = (aCube, arrAction) => {
+    for (let i = 0; i < arrAction.length; i++) {
+        const strActionTmp = arrAction[i];
+        const objOpt = {
+            bReverse: (strActionTmp.split('').indexOf('\'') <= -1) ? false : true,
+            bDouble: (strActionTmp.split('').indexOf('2') <= -1) ? false : true,
+        };
+                
+        const strAction = strActionTmp.replace("2", '');      
+        switch (strAction) {
+            // 가장 윗줄을 왼쪽으로
+            case 'U': 
+            case 'U\'': 
+                executeU(aCube, objOpt); break; 
+            default: break;
+        }
+
+        console.log(`\n--action: ${strActionTmp}\n${cubeStateView(aCube)}`);
+    }   
+};
+
+
+// 4 (main). readInput, 큐브 실행
 const readInput = (aCube) => {
     const readline = require('readline');
     const rl = readline.createInterface({
@@ -83,7 +137,7 @@ const readInput = (aCube) => {
     rl.prompt();
     rl.on('line', (strLine) => {
         if (strLine.toUpperCase() === 'Q') rl.close();
-        console.log(arrActionCreate(strLine));
+        actionEx(aCube, arrActionCreate(strLine));
 
         rl.prompt();
     }).on('close', () => {
@@ -99,6 +153,7 @@ const readInput = (aCube) => {
 
 // 1. 큐브 기본 값
 const cube = {
+    // 속성 이름들은 단지 어느 면인지 나타내는 것임.
     up: Array.from({ length: 3 }, () => new Array(3).fill('B')),
     left: Array.from({ length: 3 }, () => new Array(3).fill('W')),
     front: Array.from({ length: 3 }, () => new Array(3).fill('O')),
