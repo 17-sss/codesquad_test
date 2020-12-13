@@ -143,24 +143,6 @@ const executeB = (cubeTmp, bReverse) => {
     const cubeCopy = JSON.parse(JSON.stringify(cubeTmp));
     let tmpCnt = 2;
 
-    /* 
-        U[0][0] > L[2][0]
-        U[0][1] > L[1][0]
-        U[0][2] > L[0][0]
-
-        L[2][0] > D[2][2]
-        L[1][0] > D[2][1]
-        L[0][0] > D[2][0]
-
-        D[2][2] > R[0][2]
-        D[2][1] > R[1][2]
-        D[2][0] > R[2][2]
-
-        R[0][2] > U[0][0]
-        R[1][2] > U[0][1]
-        R[2][2] > U[0][2]
-    */
-
     if (!bReverse) {    // B              
         for (let i = 0; i < 3; i++) {                
             cubeCopy["left"][tmpCnt][0] = cubeTmp["up"][0][i];
@@ -186,6 +168,28 @@ const executeB = (cubeTmp, bReverse) => {
     }
 };
 
+// 6) D & D'
+const executeD = (cubeTmp, bReverse) => {
+    let tmp = null;
+    if (!bReverse) {    // D    
+        tmp = cubeTmp['front'].pop();
+        cubeTmp['front'].push(cubeTmp['left'].pop()); 
+        cubeTmp['left'].push(cubeTmp['back'].pop()); 
+        cubeTmp['back'].push(cubeTmp['right'].pop());
+        cubeTmp['right'].push(tmp);
+
+        cubeTmp['down'] = rotateArr(cubeTmp['down']);
+    } else {            // D'
+        tmp = cubeTmp['front'].pop();
+        cubeTmp['front'].push(cubeTmp['right'].pop()); 
+        cubeTmp['right'].push(cubeTmp['back'].pop()); 
+        cubeTmp['back'].push(cubeTmp['left'].pop());
+        cubeTmp['left'].push(tmp);
+
+
+        cubeTmp['down'] = rotateArr(cubeTmp['down'], true);
+    }  
+};
 
 
 // main
@@ -212,6 +216,9 @@ const commandFunc = (strEx, cubeTmp, objOpt) => {
             case 'B':
             case 'B\'': 
                 executeB(cubeTmp, bReverse); break;  
+            case 'D':
+            case 'D\'': 
+                executeD(cubeTmp, bReverse); break;  
             default:
                 break;
         }         
