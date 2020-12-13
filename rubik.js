@@ -90,6 +90,44 @@ const actionEx = (cubeTmp, arrAction, originCube) => {
     return bMoveChk;
 };
 
+// 4. randomCommand, 랜덤 커맨드 생성
+const randomCommand = (num) => {
+    let strRandom = '';
+    const allowList = 
+        [
+            'U', 'L', 'F', 'R', 'B', 'D', 
+            'U\'', 'L\'', 'F\'', 'R\'', 'B\'', 'D\'',
+            'U2', 'L2', 'F2', 'R2', 'B2', 'D2', 
+            'U\'2', 'L\'2', 'F\'2', 'R\'2', 'B\'2', 'D\'2',
+        ]; 
+
+    const getRandomInt = (min, max) => {
+        min = Math.ceil(min);
+        max = Math.floor(max);        
+        return Math.floor(Math.random() * (max - min)) + min; 
+    }
+
+    for (let i = 0; i < num; i++) {
+        let randomInt = getRandomInt(0, allowList.length);       
+        strRandom += allowList[randomInt];
+    }
+
+    return strRandom;
+}
+
+// 5. 최종 명령어 세팅
+const commandSet = (line) => {
+    let strCommand = line;
+
+    const arrLineTmp = line.split(' ');
+    if (arrLineTmp.length === 2 && arrLineTmp[0].toLowerCase() === ('mix')) {
+        const num = Number(arrLineTmp[1]);
+        if (num)    strCommand = randomCommand(num);            
+    }
+
+    return strCommand;
+}
+
 
 // 4 (main). readInput, 큐브 실행
 const readInput = (aCube) => {
@@ -104,11 +142,12 @@ const readInput = (aCube) => {
     const curCube = JSON.parse(JSON.stringify(aCube));
     rl.setPrompt('CUBE >');
     rl.prompt();
-    rl.on('line', (strLine) => {
-        if (strLine.toUpperCase() === 'Q') rl.close();
-        let moveCheck = actionEx(curCube, arrActionCreate(strLine), aCube);
-
-        if (false /* moveCheck*/ ) {
+    rl.on('line', (line) => {
+        if (line.toUpperCase() === 'Q') rl.close();
+        let strLine = commandSet(line);
+        const bMoveCheck = actionEx(curCube, arrActionCreate(strLine), aCube);
+        
+        if (bMoveCheck) {
             console.log('@@@ 큐브가 다 맞춰졌습니다! 축하합니다!! @@@');
             rl.close();        
         }
@@ -151,7 +190,8 @@ console.log(
     + '\t' + '(!) 모든 값에는 숫자 2가 붙을 수 있습니다.' + '\n'
     + '\t' + '    - 2가 뒤에 붙을 시 180도 회전, 평상시 90도 회전' + '\n'
     + '   ' + '<입력 예>' + '\n'     
-    + '\t' + 'U  LB\'  F2D\'2  FRR\'U2R\'' + '\n\n'
+    + '\t' + '1.일반:   U  LB\'  F2D\'2  FRR\'U2R\'' + '\n\n'
+    + '\t' + '2.랜덤:   mix [숫자]' + '\n\n'
     + '[info] 종료하시려면 \'알파벳 Q(q)\'를 입력하거나 Ctrl + C를 눌러주세요.' + '\n'
     + '====================================================================='
 );  
