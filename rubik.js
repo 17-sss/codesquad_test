@@ -171,10 +171,7 @@ const readInput = (aCube) => {
         rl.prompt();
     }).on('close', () => {
         console.log('');
-        /*
-            경과시간: 00:31 //추가 구현 항목
-            조작갯수: 6            
-        */        
+        
         let endTime = new Date();
         console.log(calcTime(startTime, endTime));
         console.log('조작갯수: ' + nOperCnt);
