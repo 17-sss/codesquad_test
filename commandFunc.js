@@ -108,7 +108,7 @@ const executeF = (cubeTmp, bReverse) => {
     }
 };
 
-// 3) R & R'
+// 4) R & R'
 const executeR = (cubeTmp, bReverse) => {
     const cubeCopy = JSON.parse(JSON.stringify(cubeTmp));
     let tmpCnt = 2;
@@ -140,10 +140,13 @@ const executeR = (cubeTmp, bReverse) => {
         }
         cubeCopy['right'] = rotateArr(cubeCopy['right']);
     } else {            // R'
-        for (let i = 0; i < 3; i++) { 
-            
-            tmpCnt--; 
-        } 
+        for (let i = 0; i < 3; i++) {                
+            cubeCopy["up"][i][2] = cubeTmp["back"][tmpCnt][0];
+            cubeCopy["back"][tmpCnt][0] = cubeTmp["down"][i][2];
+            cubeCopy["down"][i][2] = cubeTmp["front"][i][2];                
+            cubeCopy["front"][i][2] = cubeTmp["up"][i][2];
+            tmpCnt--;            
+        }
         cubeCopy['right'] = rotateArr(cubeCopy['right'], true);        
     }
 
