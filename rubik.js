@@ -1,6 +1,9 @@
 // [STEP-3]
 const commandFunc = require('./commandFunc');
 
+// 전역 변수
+var nOperCnt = 0;
+
 // [function] START ****************************
 
 // 1. cubeStateView, 현재 큐브 상태 반환 (String)
@@ -86,6 +89,7 @@ const actionEx = (cubeTmp, arrAction, originCube) => {
 
         bMoveChk = JSON.stringify(cubeTmp) === JSON.stringify(originCube);     
         console.log(`\n--action: ${strActionTmp}\n${cubeStateView(cubeTmp)}`);
+        nOperCnt++;
     }   
     return bMoveChk;
 };
@@ -126,10 +130,20 @@ const commandSet = (line) => {
     }
 
     return strCommand;
-}
+};
+
+// 6. 경과시간 계산
+const calcTime = (start, end) => {
+    let result = '';
+    let sec = parseInt(((end - start) / 1000) % 60);
+    let min = parseInt((end - start) / 1000 / 60);
+    result = `경과시간: ${min > 9 ? '' + min : '0' + min}:${sec > 9 ? '' + sec : '0' + sec}`;
+
+    return result;
+};
 
 
-// 4 (main). readInput, 큐브 실행
+// 7 (main). readInput, 큐브 실행
 const readInput = (aCube) => {
     const readline = require('readline');
     const rl = readline.createInterface({
@@ -139,7 +153,9 @@ const readInput = (aCube) => {
     
     console.log('\n-- 초기 상태 --\n' + cubeStateView(aCube));
 
-    const curCube = JSON.parse(JSON.stringify(aCube));
+    let startTime = new Date();
+    const curCube = JSON.parse(JSON.stringify(aCube));    
+
     rl.setPrompt('CUBE >');
     rl.prompt();
     rl.on('line', (line) => {
@@ -159,6 +175,9 @@ const readInput = (aCube) => {
             경과시간: 00:31 //추가 구현 항목
             조작갯수: 6            
         */        
+        let endTime = new Date();
+        console.log(calcTime(startTime, endTime));
+        console.log('조작갯수: ' + nOperCnt);
         console.log('이용해주셔서 감사합니다. 뚜뚜뚜.');
         process.exit();
     });
