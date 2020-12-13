@@ -2,11 +2,11 @@
 
 // >> rubik.js의 actionEx에서 사용되는 함수들
 // 1) 회전
-const rotateArr = (propArr, bLeft = false) => {
+const rotateArr = (propArr, direction = false) => {
     const CNT = 3;
     const arrCopy = [];
-
-    if (bLeft) {
+    
+    if (direction) {
         for (let i = CNT-1; i >= 0; i--) {
             const arrTmp = [];
             arrTmp.push(propArr[0][i]);
@@ -60,6 +60,8 @@ const executeL = (cubeTmp, bReverse) => {
             cubeTmp['up'][i].unshift(cubeTmp['back'][i].shift());
             cubeTmp['back'][i].unshift(cubeTmp['down'][i].shift());
             cubeTmp['down'][i].unshift(tmp);
+
+            cubeTmp['left'] = rotateArr(cubeTmp['left'], true);
         }             
     } else {            // L'
         for (let i = 0; i < 3; i++) { 
@@ -68,9 +70,58 @@ const executeL = (cubeTmp, bReverse) => {
             cubeTmp['down'][i].unshift(cubeTmp['back'][i].shift());
             cubeTmp['back'][i].unshift(cubeTmp['up'][i].shift());
             cubeTmp['up'][i].unshift(tmp);
+
+            cubeTmp['left'] = rotateArr(cubeTmp['left']);
         } 
     }
 };
+
+// 3) F & F'
+const executeF = (cubeTmp, bReverse) => {
+    const cubeCopy = JSON.parse(JSON.stringify(cubeTmp));
+    let tmpCnt = 0;
+    if (!bReverse) {    // F  
+            tmpCnt = 2;
+            for (let i = 0; i < 3; i++) {                
+                cubeCopy["up"][2][i] = cubeTmp["left"][i][2];
+                cubeCopy["left"][i][2] = cubeTmp["down"][0][i];
+                cubeCopy["down"][0][i] = cubeTmp["right"][tmpCnt][0];                
+                cubeCopy["right"][tmpCnt][0] = cubeTmp["up"][2][i];
+                tmpCnt--;            
+            }
+
+            /*
+                left[0][2] > up [2][0]
+                left[1][2] > up [2][1]
+                left[2][2] > up [2][2]
+
+                up [2][0] > right [2][0]
+                up [2][1] > right [1][0]
+                up [2][2] > right [0][0]
+
+                right[2][0] > down[0][0]
+                right[1][0] > down[0][1]
+                right[0][0] > down[0][2]
+
+                down[0][0] > left[0][2]
+                down[0][1] > left[1][2]
+                down[0][2] > left[2][2]
+            */
+
+        
+    } else {            // F'
+        for (let i = 0; i < 3; i++) { 
+            
+            
+            // cubeTmp['front'] = rotateArr(cubeTmp['front'], true);
+        } 
+    }
+
+    for (const key in cubeCopy) {
+        cubeTmp[key] = cubeCopy[key];
+    }
+};
+
 
 // main
 const commandFunc = (strEx, cubeTmp, objOpt) => {
@@ -82,12 +133,14 @@ const commandFunc = (strEx, cubeTmp, objOpt) => {
         nCnt++;
         switch (strEx) {
             case 'U': 
-            case 'U\'': {
-                executeU(cubeTmp, bReverse); break;  
-            }
+            case 'U\'':
+                executeU(cubeTmp, bReverse); break;              
             case 'L':
             case 'L\'': 
                 executeL(cubeTmp, bReverse); break;    
+            case 'F':
+            case 'F\'': 
+                executeF(cubeTmp, bReverse); break;    
             default:
                 break;
         }         
