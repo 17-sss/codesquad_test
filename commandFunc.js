@@ -113,23 +113,6 @@ const executeR = (cubeTmp, bReverse) => {
     const cubeCopy = JSON.parse(JSON.stringify(cubeTmp));
     let tmpCnt = 2;
 
-    /* 
-        F[0][2] > U[0][2]
-        F[1][2] > U[1][2]
-        F[2][2] > U[2][2]
-
-        U[0][2] > B[2][0]
-        U[1][2] > B[1][0]
-        U[2][2] > B[0][0]
-
-        B[2][0] > D[0][2]
-        B[1][0] > D[1][2]
-        B[0][0] > D[2][2]
-
-        D[0][2] > F[0][2]
-        D[1][2] > F[1][2]
-        D[2][2] > F[2][2]
-    */
     if (!bReverse) {    // R              
         for (let i = 0; i < 3; i++) {                
             cubeCopy["up"][i][2] = cubeTmp["front"][i][2];
@@ -148,6 +131,54 @@ const executeR = (cubeTmp, bReverse) => {
             tmpCnt--;            
         }
         cubeCopy['right'] = rotateArr(cubeCopy['right'], true);        
+    }
+
+    for (const key in cubeCopy) {
+        cubeTmp[key] = cubeCopy[key];
+    }
+};
+
+// 5) B & B'
+const executeB = (cubeTmp, bReverse) => {
+    const cubeCopy = JSON.parse(JSON.stringify(cubeTmp));
+    let tmpCnt = 2;
+
+    /* 
+        U[0][0] > L[2][0]
+        U[0][1] > L[1][0]
+        U[0][2] > L[0][0]
+
+        L[2][0] > D[2][2]
+        L[1][0] > D[2][1]
+        L[0][0] > D[2][0]
+
+        D[2][2] > R[0][2]
+        D[2][1] > R[1][2]
+        D[2][0] > R[2][2]
+
+        R[0][2] > U[0][0]
+        R[1][2] > U[0][1]
+        R[2][2] > U[0][2]
+    */
+
+    if (!bReverse) {    // B              
+        for (let i = 0; i < 3; i++) {                
+            cubeCopy["left"][tmpCnt][0] = cubeTmp["up"][0][i];
+            cubeCopy["down"][2][tmpCnt] = cubeTmp["left"][tmpCnt][0];
+            cubeCopy["right"][i][2] = cubeTmp["down"][2][tmpCnt];                
+            cubeCopy["up"][0][i] = cubeTmp["right"][i][2];
+            tmpCnt--;            
+        }
+        cubeCopy['back'] = rotateArr(cubeCopy['back']);
+    } else {            // B'
+        for (let i = 0; i < 3; i++) {                
+            cubeCopy["left"][tmpCnt][0] = cubeTmp["down"][2][tmpCnt];   
+            cubeCopy["down"][2][tmpCnt] = cubeTmp["right"][i][2];
+            cubeCopy["right"][i][2] = cubeTmp["up"][0][i];             
+            cubeCopy["up"][0][i] = cubeTmp["left"][tmpCnt][0];
+            tmpCnt--;            
+        }
+        cubeCopy['back'] = rotateArr(cubeCopy['back'], true);       
     }
 
     for (const key in cubeCopy) {
@@ -178,6 +209,9 @@ const commandFunc = (strEx, cubeTmp, objOpt) => {
             case 'R':
             case 'R\'': 
                 executeR(cubeTmp, bReverse); break;  
+            case 'B':
+            case 'B\'': 
+                executeB(cubeTmp, bReverse); break;  
             default:
                 break;
         }         
