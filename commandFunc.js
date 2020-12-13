@@ -52,27 +52,51 @@ const executeU = async (cubeTmp, bReverse) => {
 
 // 2) L & L'
 const executeL = (cubeTmp, bReverse) => {
-    let tmp = null;
-    if (!bReverse) {    // L
-        for (let i = 0; i < 3; i++) { 
-            tmp = cubeTmp['front'][i].shift();             
-            cubeTmp['front'][i].unshift(cubeTmp['up'][i].shift());
-            cubeTmp['up'][i].unshift(cubeTmp['back'][i].shift());
-            cubeTmp['back'][i].unshift(cubeTmp['down'][i].shift());
-            cubeTmp['down'][i].unshift(tmp);
+    /*
+        down[0][0] > back[2][2]
+        down[1][0] > back[1][2]
+        down[2][0] > back[0][2]
 
-            cubeTmp['left'] = rotateArr(cubeTmp['left'], true);
-        }             
-    } else {            // L'
-        for (let i = 0; i < 3; i++) { 
-            tmp = cubeTmp['front'][i].shift();             
-            cubeTmp['front'][i].unshift(cubeTmp['down'][i].shift());
-            cubeTmp['down'][i].unshift(cubeTmp['back'][i].shift());
-            cubeTmp['back'][i].unshift(cubeTmp['up'][i].shift());
-            cubeTmp['up'][i].unshift(tmp);
+        back[2][2] > up[0][0]
+        back[1][2] > up[1][0]
+        back[0][2] > up[2][0]
 
-            cubeTmp['left'] = rotateArr(cubeTmp['left']);
-        } 
+        up[0][0] > front[0][0]
+        up[1][0] > front[1][0]
+        up[2][0] > front[2][0]
+
+        front[0][0] > down[0][0]
+        front[1][0] > down[1][0]
+        front[2][0] > down[2][0]
+    */
+    // 201213_1056, 입체적으로 생각했을 시 기존 로직은 맞지않아 변경 (back 부분)
+
+    const cubeCopy = JSON.parse(JSON.stringify(cubeTmp));
+    let tmpCnt = 2;
+    if (!bReverse) {
+        // L
+        for (let i = 0; i < 3; i++) {
+            cubeCopy['back'][tmpCnt][2] = cubeTmp['down'][i][0];
+            cubeCopy['down'][i][0] = cubeTmp['front'][i][0];
+            cubeCopy['front'][i][0] = cubeTmp['up'][i][0];
+            cubeCopy['up'][i][0] = cubeTmp['back'][tmpCnt][2];
+            tmpCnt--;
+        }
+        cubeCopy['left'] = rotateArr(cubeCopy['left']);
+    } else {
+        // L'
+        for (let i = 0; i < 3; i++) {
+            cubeCopy['back'][tmpCnt][2] = cubeTmp['up'][i][0];
+            cubeCopy['down'][i][0] = cubeTmp['back'][tmpCnt][2];
+            cubeCopy['front'][i][0] = cubeTmp['down'][i][0];
+            cubeCopy['up'][i][0] = cubeTmp['front'][i][0];
+            tmpCnt--;
+        }
+        cubeCopy['left'] = rotateArr(cubeCopy['left'], true);
+    }
+
+    for (const key in cubeCopy) {
+        cubeTmp[key] = cubeCopy[key];
     }
 };
 
@@ -89,7 +113,6 @@ const executeF = (cubeTmp, bReverse) => {
             tmpCnt--;            
         }
         cubeCopy['front'] = rotateArr(cubeCopy['front']);
-        
     } else {            // F'
         for (let i = 0; i < 3; i++) { 
             cubeCopy["up"][2][i] = cubeTmp["right"][tmpCnt][0];
@@ -132,3 +155,35 @@ const commandFunc = (strEx, cubeTmp, objOpt) => {
 };
 
 module.exports = commandFunc;
+
+
+
+/* 
+-- bak code
+// @ 201213_1056
+// 2) L & L'
+const executeL = (cubeTmp, bReverse) => {
+    let tmp = null;
+    if (!bReverse) {    // L
+        for (let i = 0; i < 3; i++) { 
+            tmp = cubeTmp['front'][i].shift();             
+            cubeTmp['front'][i].unshift(cubeTmp['up'][i].shift());
+            cubeTmp['up'][i].unshift(cubeTmp['back'][i].shift());
+            cubeTmp['back'][i].unshift(cubeTmp['down'][i].shift());
+            cubeTmp['down'][i].unshift(tmp);
+
+            cubeTmp['left'] = rotateArr(cubeTmp['left'], true);
+        }             
+    } else {            // L'
+        for (let i = 0; i < 3; i++) { 
+            tmp = cubeTmp['front'][i].shift();             
+            cubeTmp['front'][i].unshift(cubeTmp['down'][i].shift());
+            cubeTmp['down'][i].unshift(cubeTmp['back'][i].shift());
+            cubeTmp['back'][i].unshift(cubeTmp['up'][i].shift());
+            cubeTmp['up'][i].unshift(tmp);
+
+            cubeTmp['left'] = rotateArr(cubeTmp['left']);
+        } 
+    }
+};
+*/
